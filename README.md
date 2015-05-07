@@ -1,8 +1,7 @@
 # EasyCipher
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/easy_cipher`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+A simple gem that uses ruby's OpenSSL package to simplify normal cipher use.
+It does not rely on any external libraries.
 
 ## Installation
 
@@ -22,17 +21,40 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### To create an entirely new cipher
+```ruby
+cipher = EasyCipher::Cipher.new
+encrypted_data = cipher.encrypt "my data"
+decrypted_data = cipher.decrypt encrypted_data
+=> "my data"
 
-## Development
+cipher.key
+=> "ZE\xD9\xE2B\n2J1\xDF\x10$\x03A\xB95\xE9P\xDF\xD5\xF6\xAA<\x06C\x82~\x06]\xBB\xE1G"
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `bin/console` for an interactive prompt that will allow you to experiment.
+cipher.iv
+=> "QHB\xE6\xEDpE\xDCha\x80\x02\xDB\xA5A\xAB"
+```
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release` to create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+### To create a cipher from a known key, iv
+```ruby
+known_cipher = EasyCipher::Cipher.new(known_key, known_iv)
+
+# then use it as normal.
+```
+
+### You can also create from base64 encoded values
+```ruby
+key64 = my_first_cipher.key64
+iv64 = my_first_cipher.iv64
+new_cipher = EasyCipher::Cipher.new64(key64,iv64)
+
+# then use it as normal.
+# Base64 encodings work with SQL string fields.
+```
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/easy_cipher/fork )
+1. Fork it ( https://github.com/malakai97/easy_cipher/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
