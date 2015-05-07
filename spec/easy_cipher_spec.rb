@@ -61,6 +61,20 @@ describe EasyCipher do
         it "returns the base64 encoded iv" do
           expect(subject.iv64).to eql(@iv64)
         end
+
+        it "encrypts the same consecutively" do
+          expect(subject.encrypt(@data)).to eql(@expected_secret)
+          expect(subject.encrypt(@data)).to eql(@expected_secret)
+          expect(subject.encrypt(@data)).to eql(@expected_secret)
+          expect(subject.encrypt(@data)).to eql(@expected_secret)
+        end
+
+        it "decrypts the same consecutively" do
+          expect(subject.decrypt(@expected_secret)).to eql(@data)
+          expect(subject.decrypt(@expected_secret)).to eql(@data)
+          expect(subject.decrypt(@expected_secret)).to eql(@data)
+          expect(subject.decrypt(@expected_secret)).to eql(@data)
+        end
       end
 
       context "not as base64" do

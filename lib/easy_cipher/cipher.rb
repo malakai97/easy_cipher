@@ -66,13 +66,14 @@ class EasyCipher::Cipher
   # @param encrypted_data [String] Base64 representation of the encrypted data.
   # @return [String] The decrypted data.
   def decrypt(encrypted_data)
-    return decrypt_line(Base64.decode64(encrypted_data))
+    return decrypt_line(Base64.decode64(encrypted_data), true)
   end
 
 
 
   protected
   def encrypt_line(line, final = true)
+    @encryptor.reset
     output = @encryptor.update(line)
     if final
       output << @encryptor.final
@@ -82,6 +83,7 @@ class EasyCipher::Cipher
 
 
   def decrypt_line(line, final = true)
+    @decryptor.reset
     output = @decryptor.update(line)
     if final
       output << @decryptor.final
