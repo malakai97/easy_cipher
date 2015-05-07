@@ -1,3 +1,5 @@
+require "openssl"
+require "base64"
 
 # The cipher class
 class EasyCipher::Cipher
@@ -14,7 +16,7 @@ class EasyCipher::Cipher
     @key = key
     @iv = iv
 
-    @encryptor = OpenSSL::Cipher::AES256.new(:CBC)
+    @encryptor = ::OpenSSL::Cipher::AES256.new(:CBC)
     @encryptor.encrypt
 
     if @key
@@ -29,48 +31,44 @@ class EasyCipher::Cipher
       @iv = @encryptor.random_iv
     end
 
-    @decryptor = OpenSSL::Cipher::AES256.new(:CBC)
+    @decryptor = ::OpenSSL::Cipher::AES256.new(:CBC)
     @decryptor.decrypt
     @decryptor.key = @key
     @decryptor.iv = @iv
   end
 
+  # Create a new cipher instance.
+  # @param key [String] A 256bit random key, base64 encoded.
+  # @param iv [String] An initialization vector, base64 encoded.
+  def self.new64(key, iv)
+    return self.new(Base64.decode64(key), Base64.decode64(iv))
+  end
 
-  # Encrypt the given data.  If you want to directly save this to
-  # a string SQL column, you must base64 encode OR a binary column.
-  # Alternatively, @see #encrypt_to_base64
+  # Return the key in base64 (e.g. to store in string fields)
+  def key64
+    return Base64.encode64(@key)
+  end
+
+  # Return the iv in base64 (e.g. to store in string fields)
+  def iv64
+    return Base64.encode64(@iv)
+  end
+
+  # Encrypt the given data.
   # @param data [String] The data to encrypt
-  # @return [String] The encrypted data.
+  # @return [String] Base64 representation of the encrypted data.
   def encrypt(data)
-    return encrypt_line(data, true)
+    return Base64.encode64(encrypt_line(data, true))
   end
 
 
-  # Encrypt the given data, and return it base64 encoded.
-  # Best for use when the result must be saved to a string column.
-  # @param data [String] the data to encrypt
-  # @return [String] The encrypted data, base64 encoded.
-  def encrypt_to_base64(data)
-    return Base64.encode64(encrypt(data))
-  end
-
-
-  # Decrypt the given data.  For use with encrypt.
-  # @see #encrypt.
-  # @param encrypted_data [String]
+  # Decrypt the given data.
+  # @param encrypted_data [String] Base64 representation of the encrypted data.
   # @return [String] The decrypted data.
   def decrypt(encrypted_data)
-    return decrypt_line(encrypted_data, true)
-  end
-
-
-  # Decrypt the given data.  For use with encrypt_to_string.
-  # @see #encrypt_to_base64
-  # @param encrypted_data [String] Base64 encoded.
-  # @return [String] The decrypted data.
-  def decrypt_from_base64(encrypted_data)
     return decrypt_line(Base64.decode64(encrypted_data))
   end
+
 
 
   protected
