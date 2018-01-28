@@ -1,3 +1,7 @@
+I no longer intend to maintain this project. At the very least, this means that you should
+verify its security yourself before using it. If anyone would like to maintain it, drop me
+a line.
+
 # EasyCipher
 
 A simple gem that uses ruby's OpenSSL package to simplify normal cipher use.
